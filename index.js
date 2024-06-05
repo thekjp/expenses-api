@@ -11,12 +11,12 @@ app.use(cors());
 //route handlers
 const userRoutes = require("./routes/users");
 const groupRoutes = require("./routes/groups");
-const expensesRoutes = require("./routes/expenses");
+// const expenseRoutes = require("./routes/expenses");
 
 //routes
 app.use("/users", userRoutes);
 app.use("/groups", groupRoutes);
-app.use("/expenses", expenseRoutes);
+// app.use("/expenses", expenseRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello World" });
