@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const groupsRouter = require("./routes/groups");
 require("dotenv").config();
 const { PORT, BASE_URL } = process.env;
 
@@ -9,8 +8,15 @@ const { PORT, BASE_URL } = process.env;
 app.use(express.json());
 app.use(cors());
 
-//group route
-app.use("/groups", groupsRouter);
+//route handlers
+const userRoutes = require("./routes/users");
+const groupRoutes = require("./routes/groups");
+const expensesRoutes = require("./routes/expenses");
+
+//routes
+app.use("/users", userRoutes);
+app.use("/groups", groupRoutes);
+app.use("/expenses", expenseRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello World" });

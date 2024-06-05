@@ -14,9 +14,10 @@ module.exports = {
     charset: "utf8",
   },
   migrations: {
+    directory: "./database/migrations",
     tableName: "knex_migrations",
   },
   seeds: {
-    directory: "./seeds",
+    directory: "./database/seeds",
   },
 };
