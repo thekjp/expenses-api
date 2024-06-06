@@ -5,9 +5,8 @@ const knex = require("knex")(require("../knexfile"));
 // Fake authentication middleware
 const fakeAuthMiddleware = (req, res, next) => {
   // Simulate an authenticated user by adding a userId to the request object
-  req.user = { id: 1 }; // Replace 1 with any valid user ID from your database
-  console.log("Fake user added to request:", req.user);
-  next(); // Proceed to the next middleware/route handler
+  req.user = { id: 1 };
+  next();
 };
 
 // Apply the fake authentication middleware

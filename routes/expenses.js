@@ -45,10 +45,45 @@ router.post("/", async (req, res) => {
         amount: item.amount,
       });
     }
-    const newExpense = await knex("expenses").where({ id: expensesId }).first();
+    const newExpense = await knex("expenses").where({ id: expenseId }).first();
     res.status(201).json(newExpense);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+//update expense details
+router.put("/:id", async (req, res) => {
+  try {
+    const { title, total_amount, date, items } = req.body;
+    await knex("expenses")
+      .where({ id: req.params.id })
+      .update({ title, total_amount, date });
+    await knex("expense_items").where({ expense_id: req.params.id }).del();
+    for (const item of items) {
+      await knex("expense_items").insert({
+        expense_id: req.params.id,
+        user_id: item.user_id,
+        amount: item.amount,
+      });
+    }
+    const updatedExpense = await knex("expenses")
+      .where({ id: req.params.id })
+      .first();
+    res.json(updatedExpense);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//delete an expense from a group
+router.delete("/:id", async (req, res) => {
+  try {
+    await knex("expenses").where({ id: req.params.id }).del();
+    await knex("expense_items").where({ expense_id: req.params.id }).del();
+    res.json({ message: "Expense successfully deleted." });
+  } catch (error) {
+    res.status(500).json({ error: message });
   }
 });
 
