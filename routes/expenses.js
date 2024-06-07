@@ -2,6 +2,43 @@ const express = require("express");
 const router = express.Router();
 const knex = require("knex")(require("../knexfile"));
 
+// Fake authentication middleware
+const fakeAuthMiddleware = (req, res, next) => {
+  // Simulate an authenticated user by adding a userId to the request object
+  req.user = { id: 2 };
+  next();
+};
+
+// Apply the fake authentication middleware
+router.use("/", fakeAuthMiddleware);
+
+//get all expenses owed for a logged in user
+router.get("/your-expenses", async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userExpenses = await knex("expense_items")
+      .join("expenses", "expense_items.expense_id", "expenses.id")
+      .join("groups", "expenses.group_id", "groups.id")
+      .where("expense_items.user_id", userId)
+      .select(
+        "expenses.id as expense_id",
+        "expenses.title",
+        "expenses.total_amount",
+        "expenses.date",
+        "groups.name as group_name",
+        "expense_items.amount"
+      );
+    if (userExpenses.length === 0) {
+      res.status(404).json({ message: "No expenses found for the user." });
+    } else {
+      res.json(userExpenses);
+    }
+  } catch (error) {
+    console.log({ error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
 //get all expenses for a group
 router.get("/group/:groupId", async (req, res) => {
   try {
@@ -83,7 +120,7 @@ router.delete("/:id", async (req, res) => {
     await knex("expense_items").where({ expense_id: req.params.id }).del();
     res.json({ message: "Expense successfully deleted." });
   } catch (error) {
-    res.status(500).json({ error: message });
+    res.status(500).json({ error: error.message });
   }
 });
 
