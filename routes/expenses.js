@@ -21,11 +21,11 @@ router.get("/your-expenses", async (req, res) => {
       .join("groups", "expenses.group_id", "groups.id")
       .where("expense_items.user_id", userId)
       .select(
-        "expenses.id as expense_id",
+        "expenses.id as expense_id", //add alias to make id clearer
         "expenses.title",
         "expenses.total_amount",
         "expenses.date",
-        "groups.name as group_name",
+        "groups.name as group_name", //add alias to make id clearer
         "expense_items.amount"
       );
     if (userExpenses.length === 0) {
