@@ -16,18 +16,14 @@ router.use("/", fakeAuthMiddleware);
 router.get("/your-expenses", async (req, res) => {
   try {
     const userId = req.user.id;
-    const userExpenses = await knex("expense_items")
-      .join("expenses", "expense_items.expense_id", "expenses.id")
-      .join("groups", "expenses.group_id", "groups.id")
-      .where("expense_items.user_id", userId)
-      .select(
-        "expenses.id as expense_id", //add alias to make id clearer
-        "expenses.title",
-        "expenses.total_amount",
-        "expenses.date",
-        "groups.name as group_name", //add alias to make id clearer
-        "expense_items.amount"
-      );
+    const userExpenses = await knex("expenses").where("user_id", userId).select(
+      "id as expense_id", //add alias to make id clearer
+      "title",
+      "total_amount",
+      "date",
+      "created_at",
+      "updated_at"
+    );
     if (userExpenses.length === 0) {
       res.status(404).json({ message: "No expenses found for the user." });
     } else {
@@ -86,6 +82,25 @@ router.post("/", async (req, res) => {
     res.status(201).json(newExpense);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+//add an expense to a user
+router.post("/user", async (req, res) => {
+  try {
+    const { userId, title, totalAmount, date } = req.body;
+    await knex("expenses").insert({
+      user_id: userId,
+      title,
+      total_amount: totalAmount,
+      date,
+    });
+
+    res.status(201).json({ message: "Expense added successfully" });
+  } catch (error) {
+    console.log(error);
+    console.error("Error adding expense: ", error);
+    res.status(500).json({ error: "Failed to add expense" });
   }
 });
 
