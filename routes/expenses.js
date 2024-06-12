@@ -89,14 +89,14 @@ router.post("/", async (req, res) => {
 router.post("/user", async (req, res) => {
   try {
     const { userId, title, totalAmount, date } = req.body;
-    await knex("expenses").insert({
+    const [expenseId] = await knex("expenses").insert({
       user_id: userId,
       title,
       total_amount: totalAmount,
       date,
     });
-
-    res.status(201).json({ message: "Expense added successfully" });
+    const newExpense = await knex("expenses").where({ id: expenseId }).first();
+    res.status(201).json(newExpense);
   } catch (error) {
     console.log(error);
     console.error("Error adding expense: ", error);
@@ -124,9 +124,9 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await knex("expenses").where({ id: req.params.id }).del();
-    await knex("expense_items").where({ expense_id: req.params.id }).del();
     res.json({ message: "Expense successfully deleted." });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });

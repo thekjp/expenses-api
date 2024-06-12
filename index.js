@@ -14,8 +14,8 @@ const groupRoutes = require("./routes/groups");
 const expenseRoutes = require("./routes/expenses");
 
 //routes
-app.use("/users", userRoutes);
-app.use("/groups", groupRoutes);
+app.use("/users", userRoutes); //not in use for first sprint
+app.use("/groups", groupRoutes); // not in use for first sprint
 app.use("/expenses", expenseRoutes);
 
 app.get("/", (req, res) => {
