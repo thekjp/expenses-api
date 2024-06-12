@@ -107,18 +107,10 @@ router.post("/user", async (req, res) => {
 //update expense details
 router.put("/:id", async (req, res) => {
   try {
-    const { title, total_amount, date, items } = req.body;
+    const { title, total_amount, date } = req.body;
     await knex("expenses")
       .where({ id: req.params.id })
       .update({ title, total_amount, date });
-    await knex("expense_items").where({ expense_id: req.params.id }).del();
-    for (const item of items) {
-      await knex("expense_items").insert({
-        expense_id: req.params.id,
-        user_id: item.user_id,
-        amount: item.amount,
-      });
-    }
     const updatedExpense = await knex("expenses")
       .where({ id: req.params.id })
       .first();
